@@ -1,0 +1,37 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: devcontainer
+  labels:
+    app: devcontainer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devcontainer
+  template:
+    metadata:
+      labels:
+        app: devcontainer
+    spec:
+      containers:
+        - name: exec
+          image: 'peter4431/exec:0.1'
+          command:
+            - /bin/sh
+            - '-c'
+            - '--'
+          args:
+            - while true; do sleep 300; done;
+          volumeMounts:
+            - name: docker-daemon
+              mountPath: /var/run/docker.sock
+      restartPolicy: Always
+      serviceAccountName: default
+      serviceAccount: default
+      volumes:
+        - name: docker-daemon
+          hostPath:
+            path: /var/run/docker.sock
+---
